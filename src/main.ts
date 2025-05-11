@@ -1,21 +1,19 @@
 import readline from "node:readline";
-import { deleteAllTasks } from "./operations/deleteAllTasks";
 import { hydrateTask } from "./operations/hydrateTask";
 import { idExists } from "./queries/idExists";
 import { listTasks } from "./operations/listTasks";
 import { loadDatabase } from "./db/loadDatabase";
 import { saveDatabase } from "./db/saveDatabase";
-import { searchById } from "./queries/searchById";
 import { Task } from "./model/Task";
-import { updateTask } from "./operations/updateTask";
 import { parseCommand } from "./utils/parseCommand";
-import { removeQuotes } from "./utils/removeQuotes";
 import { TXT_OPENING } from "./interface/texts";
 import { TXT_DATABASE_LOADED } from "./interface/texts";
 import { TXT_HELP } from "./interface/texts";
 import { commandNew } from "./interface/commands/commandNew";
 import { commandRead } from "./interface/commands/commandRead";
 import { commandDelete } from "./interface/commands/commandDelete";
+import { commandPurge } from "./interface/commands/commandPurge";
+import { commandChange } from "./interface/commands/commandChange";
 import { friendlyDate } from "./utils/friendlyDate";
 
 export function main() {
@@ -110,7 +108,11 @@ export function main() {
           console.log( "------------------" )
           console.log( "" );
         } catch ( err ) {
-          console.log("\n" + err + "\n");
+          if ( err instanceof Error ) {
+            console.log("\n" + err.message + "\n");
+          } else {
+            console.log( err );
+          }
         }
         rl.prompt();
         break;
@@ -137,78 +139,37 @@ export function main() {
 
       case "purge": {
         try {
-          db = deleteAllTasks();
+          commandPurge({ db : db });
           console.log("\n" + "All tasks have been deleted." + "\n");
-          rl.prompt();
         } catch ( err ) {
-          console.log( "\n" + err + "\n");
-          rl.prompt();
+          if ( err instanceof Error ) {
+            console.log( "\n" + err.message + "\n");
+          } else {
+            console.log(err);
+          }
+
         }
+        rl.prompt();
         break;
       }
 
       case "change":
       case "rename":
       case "update": {
-
-        const params = commands.slice(1);
-
-        const taskToEditId = params[0];
-
-        if (! taskToEditId ) {
-          console.log( "\n" + "Error: no task was given to edit." + "\n" );
-          rl.prompt();
-          break;
-        }
-
-        const taskToEdit : Task | undefined = searchById( taskToEditId , db );
-
-        if ( ! taskToEdit ) {
-          console.log("\n" + "Error: task was not found." + "\n");
-          rl.prompt();
-          break;
-        }
-
-        const changes = params.splice(1);
-
-        changes.forEach( change => {
-
-          if ( change.includes("=") ) {
-
-            const [ key , value ] = change.split("=");
-
-            switch ( key ) {
-              case "title": {
-                taskToEdit.setTitle(removeQuotes(value));
-                break;
-              }
-              case "description": {
-                taskToEdit.setDescription(removeQuotes(value));
-                break;
-              }
-            }
-
-            try {
-
-              updateTask( taskToEdit , db );
-              console.log("\n" + "Task has been updated." + "\n");
-              rl.prompt();
-
-            } catch (err) {
-
-              console.log("\n" + err + "\n");
-              rl.prompt();
-
-            }
+        try {
+          commandChange({
+            commands: commands ,
+            db : db
+          });
+          console.log("\n" + "Task updated." + "\n");
+        } catch ( err ) {
+          if ( err instanceof Error ) {
+            console.log("\n" + err.message + "\n");
           } else {
-
-            console.log("\n" + `Unrecognized command: ${change}. Nothing was done.` + "\n");
-            rl.prompt();
-
+            console.log(err);
           }
-          
-        });
-
+        }
+        rl.prompt()
         break;
       }
 
