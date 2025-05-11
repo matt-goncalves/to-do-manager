@@ -1,5 +1,4 @@
 import readline from "node:readline";
-import { createTask } from "./operations/createTask";
 import { deleteAllTasks } from "./operations/deleteAllTasks";
 import { deleteTask } from "./operations/deleteTask";
 import { hydrateTask } from "./operations/hydrateTask";
@@ -16,6 +15,7 @@ import { removeQuotes } from "./utils/removeQuotes";
 import { TXT_OPENING } from "./interface/texts";
 import { TXT_DATABASE_LOADED } from "./interface/texts";
 import { TXT_HELP } from "./interface/texts";
+import { commandNew } from "./interface/commands/commandNew";
 
 export function main() {
 
@@ -74,48 +74,22 @@ export function main() {
         break;
       }
 
+      case "create":
+      case "task":
       case "new": {
-
-        let title = "Untitled Task";
-        let description = "";
-
-        const params = commands.slice( 1 );
-
-        params.forEach( param => {
-
-          if ( param.includes("=") ) {
-
-            const [ key , value ] = param.split("=");
-
-            switch ( key ) {
-              case "title": {
-                title = removeQuotes(value);
-                break;
-              }
-              case "description": {
-                description = removeQuotes(value);
-                break;
-              }
-              default: {
-                console.log("\n" + "Error: unrecognized command:" + "\n" , param );
-                break;
-              }
-            }
-
-            createTask( title , description , db );
-
-            console.log("\n" + "Task created." + "\n");
-
-            rl.prompt();
-
-          } else {
-
-            console.log("\n" + `Parameter ${param} is unknown. It was ignored.` + "\n");
-
-          }
-
-        });
-        break;
+        try {
+          commandNew({
+            commands: commands,
+            db: db,
+          });
+          console.log("\n" + "Entry created." + "\n");
+          rl.prompt();
+          break;
+        } catch ( err ) {
+          console.log("\n" + err + "\n");
+          rl.prompt();
+          break;
+        }
       }
 
       case "read":
