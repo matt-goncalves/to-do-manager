@@ -13,30 +13,28 @@ import { Task } from "./model/Task";
 import { updateTask } from "./operations/updateTask";
 import { parseCommand } from "./utils/parseCommand";
 import { removeQuotes } from "./utils/removeQuotes";
+import { TXT_OPENING } from "./interface/texts";
+import { TXT_DATABASE_LOADED } from "./interface/texts";
+import { TXT_HELP } from "./interface/texts";
 
 export function main() {
+
   const rl = readline.createInterface({
     input: process.stdin ,
     output: process.stdout ,
     prompt: "[ Tasks ] >>> "
   });
 
+  // welcomes the  user
+  console.log(TXT_OPENING);
+
   let db : Array<Task>;
 
   try {
-    console.log(
-`
--------------------------
-TO DO LIST       ver. 1.0
--------------------------
-
-Welcome to the task list manager.
-Loading database...
-` 
-    )
 
     const entries = loadDatabase();
 
+    // rehydrate database
     db = entries.map(entry => {
       return hydrateTask({
         title: entry.title ,
@@ -47,13 +45,7 @@ Loading database...
       });
     });
 
-    console.log(
-`
-Database loaded.
-Ready for input.
-`
-    )
-
+    console.log(TXT_DATABASE_LOADED);
     rl.prompt();
 
   } catch (err) {
@@ -63,6 +55,7 @@ Ready for input.
 
   }
 
+  // command line
   rl.on( "line" , ( line ) => {
 
     const commands = parseCommand( line );
@@ -74,7 +67,7 @@ Ready for input.
         const tasks = listTasks( db );
         console.log("");
         tasks.forEach(task => {
-          console.log( task )
+          console.log( task );
         });
         console.log("");
         rl.prompt();
@@ -104,22 +97,20 @@ Ready for input.
                 break;
               }
               default: {
-                console.log( "Error: unrecognized command:" , param );
+                console.log("\n" + "Error: unrecognized command:" + "\n" , param );
                 break;
               }
             }
 
             createTask( title , description , db );
 
-            console.log("");
-            console.log("Task created.");
-            console.log("");
+            console.log("\n" + "Task created." + "\n");
 
             rl.prompt();
 
           } else {
 
-            console.log(`Parameter ${param} is unknown. It was ignored.`);
+            console.log("\n" + `Parameter ${param} is unknown. It was ignored.` + "\n");
 
           }
 
@@ -130,7 +121,7 @@ Ready for input.
       case "read":
       case "details": {
         const id = commands[1];
-        console.log(readTask( id , db ));
+        console.log("\n" + readTask( id , db ) + "\n");
         rl.prompt();
         break;
       }
@@ -140,12 +131,10 @@ Ready for input.
         const id = commands[1];
         try {
           deleteTask( id , db );
-          console.log("");
-          console.log("Entry deleted.");
-          console.log("");
+          console.log("\n" + "Entry deleted." + "\n");
           rl.prompt();
         } catch (err) {
-          console.log(err);
+          console.log("\n" , err , "\n");
           rl.prompt();
         }
         break;
@@ -154,14 +143,10 @@ Ready for input.
       case "purge": {
         try {
           db = deleteAllTasks();
-          console.log("");
-          console.log("All tasks have been deleted.");
-          console.log("");
+          console.log("\n" + "All tasks have been deleted." + "\n");
           rl.prompt();
         } catch ( err ) {
-          console.log("");
-          console.log( err );
-          console.log("");
+          console.log( "\n" + err + "\n");
           rl.prompt();
         }
         break;
@@ -176,7 +161,7 @@ Ready for input.
         const taskToEditId = params[0];
 
         if (! taskToEditId ) {
-          console.log( "Error: no task was given to edit." );
+          console.log( "\n" + "Error: no task was given to edit." + "\n" );
           rl.prompt();
           break;
         }
@@ -184,7 +169,7 @@ Ready for input.
         const taskToEdit : Task | undefined = searchById( taskToEditId , db );
 
         if ( ! taskToEdit ) {
-          console.log("Error: task was not found.");
+          console.log("\n" + "Error: task was not found." + "\n");
           rl.prompt();
           break;
         }
@@ -211,18 +196,18 @@ Ready for input.
             try {
 
               updateTask( taskToEdit , db );
-              console.log("Task has been updated.");
+              console.log("\n" + "Task has been updated." + "\n");
               rl.prompt();
 
             } catch (err) {
 
-              console.log(err);
+              console.log("\n" + err + "\n");
               rl.prompt();
 
             }
           } else {
 
-            console.log(`Unrecognized command: ${change}. Nothing was done.`);
+            console.log("\n" + `Unrecognized command: ${change}. Nothing was done.` + "\n");
             rl.prompt();
 
           }
@@ -235,12 +220,10 @@ Ready for input.
       case "save": {
         try {
           saveDatabase( db );
-          console.log("");
-          console.log("Database saved.");
-          console.log("");
+          console.log("\n" + "Database saved." + "\n");
           rl.prompt();
         } catch (err) {
-          console.log(err);
+          console.log("\n" + err + "\n");
           rl.prompt();
         }
         break;
@@ -256,7 +239,7 @@ Ready for input.
 
       case "exit":
       case "quit": {
-        console.log("Exiting...");
+        console.log("\n" + "Exiting..." + "\n");
         process.exit(0);
       }
 
@@ -279,13 +262,11 @@ Ready for input.
           });
 
           db[index].complete();
-          console.log("");
-          console.log("Task completed.");
-          console.log("");
+          console.log("\n" + "Task completed." + "\n");
           rl.prompt();
           
         } else {
-          console.log(`Error: task ${taskId} does not exist.`);
+          console.log("\n" + `Error: task ${taskId} does not exist.` + "\n");
           rl.prompt();
         }
         break;
@@ -308,24 +289,30 @@ Ready for input.
           });
 
           db[index].reopen();
-          console.log("Task reopened.");
+          console.log("\n" + "Task reopened." + "\n");
           rl.prompt();
           
         } else {
-          console.log(`Error: task ${taskId} does not exist.`);
+          console.log("\n" + `Error: task ${taskId} does not exist.` + "\n");
           rl.prompt();
         }
         break;
       }
+      case "help":
+       case "h": {
+        console.log(TXT_HELP);
+        rl.prompt();
+        break;
+      }
       default: {
-        console.log("Unrecognized command.");
+        console.log("\n" + "Unrecognized command." + "\n");
         rl.prompt();
       }
     }
   });
 
   rl.on( "close" , () => {
-    console.log("Exiting...");
+    console.log("\n" + "Exiting..." + "\n");
     process.exit(0);
   });
 
