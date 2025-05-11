@@ -1,5 +1,5 @@
-import { TaskObject } from "./Task";
-import { DB_LOCATION } from  "./constants";
+import { TaskObject } from "../model/Task";
+import { DB_LOCATION } from  "../constants";
 import fs from "node:fs";
 
 export function loadDatabase() : Array<TaskObject> {

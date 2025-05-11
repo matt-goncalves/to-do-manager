@@ -1,6 +1,6 @@
-import { Task } from "./Task";
-import { extractTask } from "./extractTask";
-import { DB_LOCATION , BKP_LOCATION } from "./constants";
+import { Task } from "../model/Task";
+import { extractTask } from "../operations/extractTask";
+import { DB_LOCATION , BKP_LOCATION } from "../constants";
 import fs from "node:fs";
 
 export function saveDatabase( db : Array<Task> ) {

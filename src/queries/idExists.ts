@@ -1,5 +1,5 @@
-import { Task } from "./Task";
-import { searchById } from "./searchById";
+import { Task } from "../model/Task";
+import { searchById } from "../queries/searchById";
 
 export function idExists( id : string , db : Array<Task>) : boolean {
   if ( searchById( id , db ) ) {

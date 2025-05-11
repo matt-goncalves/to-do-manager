@@ -1,6 +1,6 @@
-import { Task } from "./Task";
-import { generateId } from "./generateId";
-import { now } from "./now";
+import { Task } from "../model/Task";
+import { generateId } from "../utils/generateId";
+import { now } from "../utils/now";
 
 export function createTask(
   title : string ,

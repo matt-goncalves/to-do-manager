@@ -1,5 +1,5 @@
-import { Task } from "./Task";
-import { idExists } from "./idExists";
+import { Task } from "../model/Task";
+import { idExists } from "../queries/idExists";
 
 export function generateId( db : Array<Task>) : string {
 

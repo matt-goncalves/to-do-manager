@@ -1,18 +1,18 @@
 import readline from "node:readline";
-import { createTask } from "./createTask";
-import { deleteAllTasks } from "./deleteAllTasks";
-import { deleteTask } from "./deleteTask";
-import { hydrateTask } from "./hydrateTask";
-import { idExists } from "./idExists";
-import { listTasks } from "./listTasks";
-import { loadDatabase } from "./loadDatabase";
-import { readTask } from "./readTask";
-import { saveDatabase } from "./saveDatabase";
-import { searchById } from "./searchById";
-import { Task } from "./Task";
-import { updateTask } from "./updateTask";
-import { parseCommand } from "./parseCommand";
-import { removeQuotes } from "./removeQuotes";
+import { createTask } from "./operations/createTask";
+import { deleteAllTasks } from "./operations/deleteAllTasks";
+import { deleteTask } from "./operations/deleteTask";
+import { hydrateTask } from "./operations/hydrateTask";
+import { idExists } from "./queries/idExists";
+import { listTasks } from "./operations/listTasks";
+import { loadDatabase } from "./db/loadDatabase";
+import { readTask } from "./operations/readTask";
+import { saveDatabase } from "./db/saveDatabase";
+import { searchById } from "./queries/searchById";
+import { Task } from "./model/Task";
+import { updateTask } from "./operations/updateTask";
+import { parseCommand } from "./utils/parseCommand";
+import { removeQuotes } from "./utils/removeQuotes";
 
 export function main() {
   const rl = readline.createInterface({

@@ -1,4 +1,4 @@
-import { DB_LOCATION } from "./constants";
+import { DB_LOCATION } from "../constants";
 import fs from "node:fs";
 
 export function createDatabase() : void {

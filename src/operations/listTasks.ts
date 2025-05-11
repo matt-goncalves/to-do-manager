@@ -1,4 +1,4 @@
-import { Task } from "./Task";
+import { Task } from "../model/Task";
 
 export function listTasks( db : Array<Task> ) : Array<string> {
   const tasks = db.map( task => {

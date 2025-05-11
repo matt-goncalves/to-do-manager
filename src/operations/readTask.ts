@@ -1,5 +1,5 @@
-import { searchById } from "./searchById";
-import { Task } from "./Task";
+import { searchById } from "../queries/searchById";
+import { Task } from "../model/Task";
 
 export function readTask( taskId : string , db : Array<Task>) : string {
   const task = searchById( taskId , db );

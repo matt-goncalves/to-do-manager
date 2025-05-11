@@ -1,4 +1,4 @@
-import { Task , TaskObject } from "./Task";
+import { Task , TaskObject } from "../model/Task";
 
 export function extractTask( task : Task ) : TaskObject {
   return {
