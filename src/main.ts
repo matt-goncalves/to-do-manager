@@ -1,11 +1,9 @@
 import readline from "node:readline";
 import { deleteAllTasks } from "./operations/deleteAllTasks";
-import { deleteTask } from "./operations/deleteTask";
 import { hydrateTask } from "./operations/hydrateTask";
 import { idExists } from "./queries/idExists";
 import { listTasks } from "./operations/listTasks";
 import { loadDatabase } from "./db/loadDatabase";
-import { readTask } from "./operations/readTask";
 import { saveDatabase } from "./db/saveDatabase";
 import { searchById } from "./queries/searchById";
 import { Task } from "./model/Task";
@@ -16,6 +14,9 @@ import { TXT_OPENING } from "./interface/texts";
 import { TXT_DATABASE_LOADED } from "./interface/texts";
 import { TXT_HELP } from "./interface/texts";
 import { commandNew } from "./interface/commands/commandNew";
+import { commandRead } from "./interface/commands/commandRead";
+import { commandDelete } from "./interface/commands/commandDelete";
+import { friendlyDate } from "./utils/friendlyDate";
 
 export function main() {
 
@@ -87,30 +88,50 @@ export function main() {
           break;
         } catch ( err ) {
           console.log("\n" + err + "\n");
-          rl.prompt();
-          break;
         }
+        rl.prompt();
+        break;
       }
 
       case "read":
       case "details": {
-        const id = commands[1];
-        console.log("\n" + readTask( id , db ) + "\n");
+        try {
+          const fetchedTask = commandRead({
+            commands: commands,
+            db: db
+          });
+          console.log( "" );
+          console.log( "------------------" )
+          console.log( `TASK #${fetchedTask.taskId}` );
+          console.log( "Title:" , fetchedTask.title );
+          console.log( "Description:" , fetchedTask.description );
+          console.log( "Creation date:" , friendlyDate( new Date( fetchedTask.creationDate ) ));
+          console.log( "Status:" , fetchedTask.status );
+          console.log( "------------------" )
+          console.log( "" );
+        } catch ( err ) {
+          console.log("\n" + err + "\n");
+        }
         rl.prompt();
         break;
       }
 
       case "del":
       case "delete": {
-        const id = commands[1];
         try {
-          deleteTask( id , db );
+          commandDelete({
+            commands: commands ,
+            db: db
+          });
           console.log("\n" + "Entry deleted." + "\n");
-          rl.prompt();
         } catch (err) {
-          console.log("\n" , err , "\n");
-          rl.prompt();
+          if ( err instanceof Error ) {
+            console.log("\n" + err.message + "\n");
+          } else {
+            console.log( err );
+          }
         }
+        rl.prompt();
         break;
       }
 

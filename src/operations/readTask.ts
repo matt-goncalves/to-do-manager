@@ -1,19 +1,20 @@
 import { searchById } from "../queries/searchById";
-import { Task } from "../model/Task";
+import { Task , TaskObject } from "../model/Task";
 
-export function readTask( taskId : string , db : Array<Task>) : string {
+export function readTask( taskId : string , db : Array<Task>) : TaskObject {
+
   const task = searchById( taskId , db );
+
   if ( task ) {
-    return (
-`
---------------------------------------------------------------------------------
-Title: ${task.getTitle()}
-Description: ${task.getDescription()}
-Creation date: ${task.getCreationDate()}
-Status: ${task.getStatus()}
---------------------------------------------------------------------------------
-`
-    );
+
+    return ({
+      title: task.getTitle(),
+      description: task.getDescription(),
+      taskId: task.getTaskId(),
+      creationDate: task.getCreationDate(),
+      status: task.getStatus()
+    });
+
   } else {
 
     throw new Error(`Task ${taskId} does not exist.`);

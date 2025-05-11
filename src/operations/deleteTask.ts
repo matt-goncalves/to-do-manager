@@ -17,7 +17,7 @@ export function deleteTask( taskId : string , db : Array<Task>) : void {
     db.splice(index , 1);
 
   } else {
-    throw new Error( `Error: task ID ${taskId} does not exist.` );
+    throw new Error( `Task ID ${taskId} does not exist.` );
   }
 }
 
