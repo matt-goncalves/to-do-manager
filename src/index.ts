@@ -150,6 +150,10 @@ function listTasks( db : Array<Task> ) : Array<string> {
   return tasks;
 }
 
+function deleteAllTasks() : [] {
+  return []
+}
+
 function searchByTitle( title : string , db : Array<Task>) : Array<Task> | undefined {
   const entries = db.filter( task => {
     if ( task.getTitle() === title ) {
@@ -401,6 +405,7 @@ Ready for input.
         break;
       }
 
+      case "del":
       case "delete": {
         const id = commands[1];
         try {
@@ -411,6 +416,24 @@ Ready for input.
           rl.prompt();
         } catch (err) {
           console.log(err);
+          rl.prompt();
+        }
+        break;
+      }
+
+      case "clean":
+      case "clear":
+      case "purge": {
+        try {
+          db = deleteAllTasks();
+          console.log("");
+          console.log("All tasks have been deleted.");
+          console.log("");
+          rl.prompt();
+        } catch ( err ) {
+          console.log("");
+          console.log( err );
+          console.log("");
           rl.prompt();
         }
         break;
