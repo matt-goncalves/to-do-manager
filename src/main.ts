@@ -1,9 +1,7 @@
 import readline from "node:readline";
 import { hydrateTask } from "./operations/hydrateTask";
 import { idExists } from "./queries/idExists";
-import { listTasks } from "./operations/listTasks";
 import { loadDatabase } from "./db/loadDatabase";
-import { saveDatabase } from "./db/saveDatabase";
 import { Task } from "./model/Task";
 import { parseCommand } from "./utils/parseCommand";
 import { TXT_OPENING } from "./interface/texts";
@@ -14,6 +12,8 @@ import { commandRead } from "./interface/commands/commandRead";
 import { commandDelete } from "./interface/commands/commandDelete";
 import { commandPurge } from "./interface/commands/commandPurge";
 import { commandChange } from "./interface/commands/commandChange";
+import { commandList } from "./interface/commands/commandList";
+import { commandSave } from "./interface/commands/commandSave";
 import { friendlyDate } from "./utils/friendlyDate";
 
 export function main() {
@@ -63,12 +63,21 @@ export function main() {
 
       case "ls":
       case "list": {
-        const tasks = listTasks( db );
-        console.log("");
-        tasks.forEach(task => {
-          console.log( task );
-        });
-        console.log("");
+        try {
+          const list = commandList({
+            commands: commands,
+            db: db
+          });
+          console.log("");
+          list.forEach(item => console.log(item));
+          console.log("");
+        } catch ( err ) {
+          if ( err instanceof Error ) {
+            console.log("\n" + err.message + "\n");
+          } else {
+            console.log(err);
+          }
+        }
         rl.prompt();
         break;
       }
@@ -175,13 +184,19 @@ export function main() {
 
       case "save": {
         try {
-          saveDatabase( db );
+          commandSave({
+            db: db ,
+            commands: commands
+          });
           console.log("\n" + "Database saved." + "\n");
-          rl.prompt();
         } catch (err) {
-          console.log("\n" + err + "\n");
-          rl.prompt();
+          if ( err instanceof Error ) {
+            console.log("\n" + err.message + "\n");
+          } else {
+            console.log(err);
+          }
         }
+        rl.prompt();
         break;
       }
 
