@@ -95,7 +95,11 @@ export function main() {
           rl.prompt();
           break;
         } catch ( err ) {
-          console.log("\n" + err + "\n");
+          if ( err instanceof Error ) {
+            console.log( "\n" + err.message + "\n" );
+          } else {
+            console.log( err );
+          }
         }
         rl.prompt();
         break;
