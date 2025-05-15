@@ -10,8 +10,8 @@ export function commandNew( props : CommandNewProps ) {
     throw new Error("No parameters were given.");
   }
 
-  let title = "Untitled Task";
-  let description = "";
+  let title : string | undefined = undefined;
+  let description : string | undefined = undefined;
 
   const paramCheck = /^(\w+)="([^"]+)"$/;
 
@@ -26,10 +26,16 @@ export function commandNew( props : CommandNewProps ) {
 
     switch ( key ) {
       case "title": {
+        if ( title ) {
+          throw new Error( "Title has been given twice in the same command. Aborting." );
+        }
         title = removeQuotes(value);
         break;
       }
       case "description": {
+        if ( description ) {
+          throw new Error("Description has been given twice in the same command. Aborting");
+        }
         description = removeQuotes(value);
         break;
       }
@@ -38,9 +44,14 @@ export function commandNew( props : CommandNewProps ) {
       }
     }
 
-    createTask( title , description , props.db );
-
   });
+
+  if ( ! title ) {
+    throw new Error( "Title was not defined. Aborting." );
+  }
+
+  createTask( title , description ? description : '', props.db );
+
 }
 
 type CommandNewProps = {

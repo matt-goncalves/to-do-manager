@@ -148,7 +148,10 @@ export function main() {
 
       case "purge": {
         try {
-          commandPurge({ db : db });
+          commandPurge({
+            db : db,
+            commands: commands
+          });
           console.log("\n" + "All tasks have been deleted." + "\n");
         } catch ( err ) {
           if ( err instanceof Error ) {
