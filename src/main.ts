@@ -1,6 +1,5 @@
 import readline from "node:readline";
 import { hydrateTask } from "./operations/hydrateTask";
-import { idExists } from "./queries/idExists";
 import { loadDatabase } from "./db/loadDatabase";
 import { Task } from "./model/Task";
 import { parseCommand } from "./utils/parseCommand";
@@ -14,6 +13,8 @@ import { commandPurge } from "./interface/commands/commandPurge";
 import { commandChange } from "./interface/commands/commandChange";
 import { commandList } from "./interface/commands/commandList";
 import { commandSave } from "./interface/commands/commandSave";
+import { commandDone } from "./interface/commands/commandDone";
+import { commandUndone } from "./interface/commands/commandUndone";
 import { friendlyDate } from "./utils/friendlyDate";
 
 export function main() {
@@ -101,6 +102,7 @@ export function main() {
       }
 
       case "read":
+      case "view":
       case "details": {
         try {
           const fetchedTask = commandRead({
@@ -223,26 +225,20 @@ export function main() {
       case "finished":
       case "check":
       case "conclude": {
-        const taskId = commands[1];
-        if ( idExists( taskId , db ) ) {
-
-          const index = db.findIndex( ( task ) => {
-
-            if ( task.getTaskId() === taskId ) {
-              return true;
-            } else {
-              return false;
-            }
+        try {
+          commandDone({
+            db: db,
+            commands: commands
           });
-
-          db[index].complete();
-          console.log("\n" + "Task completed." + "\n");
-          rl.prompt();
-          
-        } else {
-          console.log("\n" + `Error: task ${taskId} does not exist.` + "\n");
-          rl.prompt();
+          console.log("\n" + "Task concluded." + "\n");
+        } catch ( err ) {
+          if ( err instanceof Error ) {
+            console.log( "\n" + err.message + "\n");
+          } else {
+            console.log( err );
+          }
         }
+        rl.prompt();
         break;
       }
       case "open":
@@ -250,26 +246,20 @@ export function main() {
       case "activate":
       case "reactivate":
       case "uncheck": {
-        const taskId = commands[1];
-        if ( idExists( taskId , db ) ) {
-
-          const index = db.findIndex( ( task ) => {
-
-            if ( task.getTaskId() === taskId ) {
-              return true;
-            } else {
-              return false;
-            }
+        try {
+          commandUndone({
+            db: db,
+            commands: commands
           });
-
-          db[index].reopen();
-          console.log("\n" + "Task reopened." + "\n");
-          rl.prompt();
-          
-        } else {
-          console.log("\n" + `Error: task ${taskId} does not exist.` + "\n");
-          rl.prompt();
+          console.log( "Task has been reactivated." );
+        } catch ( err ) {
+          if ( err instanceof Error ) {
+            console.log( "\n" + err.message + "\n" );
+          } else {
+            console.log( err );
+          }
         }
+        rl.prompt();
         break;
       }
       case "help":
