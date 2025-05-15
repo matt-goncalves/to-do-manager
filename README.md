@@ -30,6 +30,7 @@ node to-do-manager/
 
 You will receive a prompt to interact with this application. These are the basic commands:
 
+```text
 | Command | Parameters           | Description                    |
 |---------+----------------------|--------------------------------|
 | new     | title=""             | Create new entry               |
@@ -46,3 +47,4 @@ You will receive a prompt to interact with this application. These are the basic
 | purge   |                      | Purge (delete) all entries     |
 | details | <entry_number>       | Show details of an entry       |
 | exit    |                      | Exit program                   |
+```
